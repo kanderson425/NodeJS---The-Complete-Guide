@@ -4,7 +4,8 @@ const requestHandler = (req, res) => {
   const url = req.url;
   const method = req.method;
 
-  if (url == "/") {
+  if (url === "/") {
+    res.setHeader("Content-Type", "text/html");
     res.write("<html>");
     res.write("<head><title>My First Page</title></head>");
     res.write(
@@ -13,30 +14,28 @@ const requestHandler = (req, res) => {
     res.write("</html>");
     return res.end();
   }
-  if (url == "/users") {
+  if (url === "/users") {
     res.write("<html>");
     res.write("<head><title>My First Page</title></head>");
     res.write(
-      "<body><h1>Hello from Assignment App!</h1><ul><li>User 1</li><li>User 2</li><li>User 3</li></ul></body>"
+      "<body><ul><li>User 1</li><li>User 2</li><li>User 3</li></ul></body>"
     );
     res.write("</html>");
     return res.end();
   }
-  if (url == "/create-user" && method == "POST") {
+  if (url === "/create-user") {
     const body = [];
     req.on("data", (chunk) => {
-      console.log(chunk);
       body.push(chunk);
     });
     req.on("end", () => {
       const parsedBody = Buffer.concat(body).toString();
-      const message = parsedBody.split("=")[1];
-      fs.writeFile("message.txt", message, (err) => {
-        res.statusCode = 302;
-        res.setHeader("Location", "/");
-        return res.end();
-      });
+      const username = parsedBody.split("=")[1];
+      console.log(username);
     });
+    res.statusCode = 302;
+    res.setHeader("Location", "/");
+    res.end();
   }
 };
 
