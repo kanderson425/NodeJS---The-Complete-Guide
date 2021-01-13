@@ -4,21 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>{{ pageTitle }}</title>
+    <title>Users</title>
     <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/product.css" />
   </head>
 
   <body>
     <header class="main-header">
       <nav class="main-header__nav">
         <ul class="main-header__item-list">
-          <li class="main-header__item"><a href="/">Shop</a></li>
           <li class="main-header__item">
-            <a href="/admin/add-product">Add Product</a>
+            <a class="active" href="/users">Users</a>
+          </li>
+          <li class="main-header__item">
+            <a href="/">Add User</a>
           </li>
         </ul>
       </nav>
     </header>
-    <h1>Page Not Found!</h1>
+
+    <main>
+      <% if(users.length > 0) { %>
+      <ul>
+        <% for(let user of users) { %>
+        <li><%= user.name %></li>
+        <% } %>
+      </ul>
+      <% } else { %>
+      <h1>No Users Found!</h1>
+      <% } %>
+    </main>
   </body>
 </html>
