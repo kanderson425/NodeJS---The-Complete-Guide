@@ -23,6 +23,14 @@ main {
   max-width: 30vw;
 }
 
+.image {
+  height: 20rem;
+}
+
+.mmageg img {
+  height: 100%;
+}
+
 form {
   display: inline;
 }
