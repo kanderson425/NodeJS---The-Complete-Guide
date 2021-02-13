@@ -45,6 +45,58 @@ class User {
       );
   }
 
+  getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map((i) => {
+      return i.productId;
+    });
+    return db
+      .collection("products")
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.items.find((i) => {
+              return i.productId.toString() === p._id.toString();
+            }).quantity,
+          };
+        });
+      });
+  }
+
+  deleteItemById(product) {
+    const db = getDb();
+    const cartProductIndex = this.cart.items.findIndex((cp) => {
+      return cp.productId.toString() === product._id.toString();
+    });
+    const updatedCartItems = this.cart.items;
+    if (
+      cartProductIndex >= 0 &&
+      this.cart.items[cartProductIndex].quantity > 1
+    ) {
+      const reduceQuantity = this.cart.items[cartProductIndex].quantity - 1;
+      updatedCartItems[cartProductIndex].quantity = reduceQuantity;
+    } else if (
+      cartProductIndex >= 0 &&
+      this.cart.items[cartProductIndex].quantity <= 1
+    ) {
+      updatedCartItems.splice(cartProductIndex, 1);
+    } else {
+      console.log("Product does not exist!");
+    }
+    const updatedCart = {
+      items: updatedCartItems,
+    };
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: updatedCart } }
+      );
+  }
+
   static findById(userId) {
     const db = getDb();
     return db
