@@ -66,35 +66,50 @@ class User {
       });
   }
 
-  deleteItemById(product) {
-    const db = getDb();
-    const cartProductIndex = this.cart.items.findIndex((cp) => {
-      return cp.productId.toString() === product._id.toString();
+  deleteItemFromCart(productId) {
+    const updatedCartItems = this.cart.items.filter((item) => {
+      return item.productId.toString() !== productId.toString();
     });
-    const updatedCartItems = this.cart.items;
-    if (
-      cartProductIndex >= 0 &&
-      this.cart.items[cartProductIndex].quantity > 1
-    ) {
-      const reduceQuantity = this.cart.items[cartProductIndex].quantity - 1;
-      updatedCartItems[cartProductIndex].quantity = reduceQuantity;
-    } else if (
-      cartProductIndex >= 0 &&
-      this.cart.items[cartProductIndex].quantity <= 1
-    ) {
-      updatedCartItems.splice(cartProductIndex, 1);
-    } else {
-      console.log("Product does not exist!");
-    }
-    const updatedCart = {
-      items: updatedCartItems,
-    };
+    const db = getDb();
     return db
       .collection("users")
       .updateOne(
         { _id: new ObjectId(this._id) },
-        { $set: { cart: updatedCart } }
+        { $set: { cart: { items: updatedCartItems } } }
       );
+  }
+
+  addOrder() {
+    const db = getDb();
+    return this.getCart()
+      .then((products) => {
+        const order = {
+          items: products,
+          user: {
+            _id: new ObjectId(this._id),
+            name: this.name,
+            email: this.email,
+          },
+        };
+        return db.collection("orders").insertOne(order);
+      })
+      .then((result) => {
+        this.cart = { items: [] };
+        return db
+          .collection("users")
+          .updateOne(
+            { _id: new ObjectId(this._id) },
+            { $set: { cart: { items: [] } } }
+          );
+      });
+  }
+
+  getOrders() {
+    const db = getDb();
+    return db
+      .collection("orders")
+      .find({ "user._id": new ObjectId(this._id) })
+      .toArray();
   }
 
   static findById(userId) {
