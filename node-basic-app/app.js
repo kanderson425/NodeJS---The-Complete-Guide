@@ -27,16 +27,16 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use((req, res, next) => {
-  User.findById("602859b19df89af722708a56")
-    .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+// app.use((req, res, next) => {
+//   User.findById("602859b19df89af722708a56")
+//     .then((user) => {
+//       req.user = new User(user.name, user.email, user.cart, user._id);
+//       next();
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -45,7 +45,7 @@ app.use(errorController.get404);
 
 mongoose
   .connect(
-    "mongodb+srv://kanderson425:Test1234%21@cluster0.qjf8n.mongodb.net/test?authSource=admin&replicaSet=atlas-9shndv-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
+    "mongodb+srv://kanderson425:Test1234@cluster0.qjf8n.mongodb.net/shop"
   )
   .then((result) => {
     app.listen(3000);
