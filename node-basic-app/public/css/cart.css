@@ -22,3 +22,20 @@
   margin: 0;
 }
 
+.cart__btn {
+  display: inline-block;
+  padding: 5px 10px;
+  text-decoration: none;
+  font: inherit;
+  border: 1px solid #00695c;
+  color: #00695c;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.cart__btn:hover,
+.cart__btn:active {
+  background-color: #00695c;
+  color: white;
+}

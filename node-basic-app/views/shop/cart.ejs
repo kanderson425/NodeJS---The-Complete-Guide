@@ -15,6 +15,14 @@
                                 <input type="hidden" value="<%= p.productId._id %>" name="productId">
                                  <button class="btn danger" type="submit">DELETE</button>
                             </form>
+                            <form action="/cart-decrement-item" method="POST">
+                                <input type="hidden" value="<%= p.productId._id %>" name="productId">
+                                 <button class="cart__btn" type="submit">-</button>
+                            </form>
+                            <form action="/cart-increment-item" method="POST">
+                                <input type="hidden" value="<%= p.productId._id %>" name="productId">
+                                 <button class="cart__btn" type="submit">+</button>
+                            </form>
                         </li>
                     <% }) %>
                 </ul>

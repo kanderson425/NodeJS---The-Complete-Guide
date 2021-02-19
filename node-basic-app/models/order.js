@@ -9,6 +9,10 @@ const orderSchema = new Schema({
       quantity: { type: Number, required: true },
     },
   ],
+  orderTotal: {
+    type: Number,
+    required: true,
+  },
   user: {
     name: {
       type: String,

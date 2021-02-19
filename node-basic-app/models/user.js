@@ -54,9 +54,57 @@ userSchema.methods.getCart = function () {
 };
 
 userSchema.methods.removeFromCart = function (productId) {
-  const updatedCartItems = this.cart.items.filter((item) => {
-    return item.productId.toString() !== productId.toString();
+  // const updatedCartItems = this.cart.items.filter((item) => {
+  //   return item.productId.toString() !== productId.toString();
+  // });
+  // this.cart.items = updatedCartItems;
+  // return this.save();
+  const cartProductIndex = this.cart.items.findIndex((cp) => {
+    return cp.productId.toString() === productId.toString();
   });
+
+  const updatedCartItems = this.cart.items;
+  if (cartProductIndex >= 0 && this.cart.items[cartProductIndex].quantity > 1) {
+    const reduceQuantity = this.cart.items[cartProductIndex].quantity - 1;
+    updatedCartItems[cartProductIndex].quantity = reduceQuantity;
+  } else if (
+    cartProductIndex >= 0 &&
+    this.cart.items[cartProductIndex].quantity <= 1
+  ) {
+    updatedCartItems.splice(cartProductIndex, 1);
+  } else {
+    console.log("Product does not exist!");
+  }
+
+  this.cart.items = updatedCartItems;
+  return this.save();
+};
+
+userSchema.methods.decrementProduct = function (productId) {
+  const cartProductIndex = this.cart.items.findIndex((cp) => {
+    console.log("cp.productId", cp.productId);
+    console.log("productId", productId);
+    return cp.productId.toString() === productId.toString();
+  });
+
+  if (cartProductIndex >= 0 && this.cart.items[cartProductIndex].quantity > 1) {
+    const reduceQuantity = this.cart.items[cartProductIndex].quantity - 1;
+    updatedCartItems[cartProductIndex].quantity = reduceQuantity;
+  }
+  const updatedCartItems = this.cart.items;
+
+  this.cart.items = updatedCartItems;
+  return this.save();
+};
+
+userSchema.methods.incrementProduct = function (productId) {
+  const cartProductIndex = this.cart.items.findIndex((cp) => {
+    return cp.productId.toString() === productId.toString();
+  });
+  const updatedCartItems = this.cart.items;
+  const addQuantity = this.cart.items[cartProductIndex].quantity + 1;
+  updatedCartItems[cartProductIndex].quantity = addQuantity;
+
   this.cart.items = updatedCartItems;
   return this.save();
 };

@@ -83,6 +83,30 @@ exports.postCartDeleteProduct = (req, res, next) => {
     });
 };
 
+exports.postCartDecrementProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  req.user
+    .decrementProduct(prodId)
+    .then((result) => {
+      res.redirect("/cart");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+exports.postCartIncrementProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  req.user
+    .incrementProduct(prodId)
+    .then((result) => {
+      res.redirect("/cart");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 exports.postOrder = (req, res, next) => {
   req.user
     .populate("cart.items.productId")
@@ -91,12 +115,18 @@ exports.postOrder = (req, res, next) => {
       const products = user.cart.items.map((i) => {
         return { quantity: i.quantity, product: { ...i.productId._doc } };
       });
+      const productTotals = user.cart.items.map((i) => {
+        return i.productId._doc.price * i.quantity;
+      });
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      const subTotal = productTotals.reduce(reducer);
       const order = new Order({
         user: {
           name: req.user.name,
           userId: req.user,
         },
         products: products,
+        orderTotal: subTotal,
       });
       return order.save();
     })
@@ -116,7 +146,6 @@ exports.getOrders = (req, res, next) => {
         pageTitle: "Your Orders",
         path: "/orders",
         orders: orders,
-        orderTotal: orderTotal,
       });
     })
     .catch((err) => console.log(err));
