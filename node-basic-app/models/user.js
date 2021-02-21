@@ -22,6 +22,10 @@ const userSchema = new Schema({
         quantity: { type: Number, required: true },
       },
     ],
+    // total: {
+    //   type: Number,
+    //   required: true,
+    // },
   },
 });
 
@@ -41,8 +45,19 @@ userSchema.methods.addToCart = function (product) {
       quantity: newQuantity,
     });
   }
+
+  // const reducer = (accumulator, currentValue) => accumulator + currentValue;
+  // const cartTotalArray = user.cart.items.map((item) => {
+  //   return item.quantity * { ...item.productId._doc }.price;
+  // });
+  // console.log("cartTotalArry", cartTotalArray);
+
+  // const cartSubTotal = cartTotalArray.reduce(reducer);
+  // console.log(cartSubTotal);
+
   const updatedCart = {
     items: updatedCartItems,
+    // total: cartSubTotal,
   };
   this.cart = updatedCart;
   return this.save();
