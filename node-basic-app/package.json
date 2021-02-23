@@ -13,9 +13,11 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "connect-mongodb-session": "^2.4.1",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-handlebars": "^3.0.2",
+    "express-session": "^1.17.1",
     "mongodb": "^3.6.4",
     "mongoose": "^5.11.15",
     "mysql2": "^2.2.5",
