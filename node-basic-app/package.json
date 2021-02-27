@@ -14,6 +14,7 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^2.4.1",
     "csurf": "^1.11.0",
     "ejs": "^3.1.5",
@@ -23,6 +24,8 @@
     "mongodb": "^3.6.4",
     "mongoose": "^5.11.15",
     "mysql2": "^2.2.5",
+    "nodemailer": "^6.5.0",
+    "nodemailer-sendgrid-transport": "^0.2.0",
     "pug": "^3.0.0",
     "sequelize": "^6.5.0"
   },
