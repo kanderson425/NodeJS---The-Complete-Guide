@@ -58,8 +58,9 @@ exports.getSignup = (req, res, next) => {
     oldInput: {
       email: "",
       password: "",
+      confirmPassword: "",
     },
-    validationErrors: errors.array(),
+    validationErrors: [],
   });
 };
 
@@ -68,9 +69,7 @@ exports.postLogin = (req, res, next) => {
   const password = req.body.password;
 
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
-    console.log(errors.array());
     return res.status(422).render("auth/login", {
       path: "/login",
       pageTitle: "Login",
@@ -82,6 +81,7 @@ exports.postLogin = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
+
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
@@ -123,7 +123,11 @@ exports.postLogin = (req, res, next) => {
           res.redirect("/login");
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postSignup = (req, res, next) => {
@@ -166,7 +170,9 @@ exports.postSignup = (req, res, next) => {
       // });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -213,19 +219,22 @@ exports.postReset = (req, res, next) => {
         transporter.sendMail({
           to: req.body.email,
           from: "shop@node-complete.com",
-          subject: "Password Reset",
-          text: "Request to reset password",
+          subject: "Password reset",
           html: `
-          <p>You requested a password reset</p>
-          <p>Clilck this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-        `,
+            <p>You requested a password reset</p>
+            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+          `,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
   });
 };
 
-exports.getnewPassword = (req, res, next) => {
+exports.getNewPassword = (req, res, next) => {
   const token = req.params.token;
   User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
     .then((user) => {
@@ -237,13 +246,17 @@ exports.getnewPassword = (req, res, next) => {
       }
       res.render("auth/new-password", {
         path: "/new-password",
-        pageTitle: "Update Password",
+        pageTitle: "New Password",
         errorMessage: message,
-        passwordToken: token,
         userId: user._id.toString(),
+        passwordToken: token,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postNewPassword = (req, res, next) => {
@@ -263,22 +276,16 @@ exports.postNewPassword = (req, res, next) => {
     })
     .then((hashedPassword) => {
       resetUser.password = hashedPassword;
-      resetUser.resetToken = null;
+      resetUser.resetToken = undefined;
       resetUser.resetTokenExpiration = undefined;
-      resetUser.save();
+      return resetUser.save();
     })
     .then((result) => {
       res.redirect("/login");
-      transporter.sendMail({
-        to: req.body.email,
-        from: "shop@node-complete.com",
-        subject: "Successful Password Reset!",
-        text: "You have successfully reset your password!",
-        html: `
-      <p>You have successfully reset your password!</p>
-      <p>If you did not make this request yourself...well then, you're doomed.</p>
-    `,
-      });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
