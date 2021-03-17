@@ -107,13 +107,11 @@ userSchema.methods.decrementProduct = function (productId) {
     console.log("productId", productId);
     return cp.productId.toString() === productId.toString();
   });
-
+  const updatedCartItems = this.cart.items;
   if (cartProductIndex >= 0 && this.cart.items[cartProductIndex].quantity > 1) {
     const reduceQuantity = this.cart.items[cartProductIndex].quantity - 1;
     updatedCartItems[cartProductIndex].quantity = reduceQuantity;
   }
-  const updatedCartItems = this.cart.items;
-
   this.cart.items = updatedCartItems;
   return this.save();
 };
