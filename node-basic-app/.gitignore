@@ -1,1 +1,3 @@
 util/
+views/shop/checkout.ejs
+controllers/shop.js
