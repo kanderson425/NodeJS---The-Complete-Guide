@@ -22,7 +22,7 @@ class Feed extends Component {
   };
 
   componentDidMount() {
-    fetch("http://localhost:8080/feed/status", {
+    fetch("http://localhost:8080/auth/status", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + this.props.token,
@@ -83,8 +83,13 @@ class Feed extends Component {
 
   statusUpdateHandler = (event) => {
     event.preventDefault();
-    fetch("http://localhost:8080/", {
-      method: "PUT",
+    fetch("http://localhost:8080/auth/status", {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + this.props.token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: this.state.status }),
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {

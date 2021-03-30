@@ -191,27 +191,3 @@ const clearImage = (filePath) => {
   filePath = path.join(__dirname, "..", filePath);
   fs.unlink(filePath, (err) => console.log(err));
 };
-
-exports.getStatus = (req, res, next) => {
-  const userId = req.userId;
-  console.log("userId", req.userId);
-  User.findById(userId)
-    .then((user) => {
-      console.log(user);
-      let userStatus = user.status;
-      if (!userStatus) {
-        const error = new Error("Could not find post.");
-        error.statusCode = 404;
-        throw error;
-      }
-      res.status(200).json({ message: "Status fetched.", status: userStatus });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
-};
-
-exports.updateStatus = (req, res, next) => {};
