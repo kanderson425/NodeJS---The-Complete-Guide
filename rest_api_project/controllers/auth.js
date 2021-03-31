@@ -22,8 +22,8 @@ exports.signup = async (req, res, next) => {
       name: name,
       password: hashedPw,
     });
-    user.save();
-    res.status(201).json({ message: "User created!", userId: user._id });
+    const result = await user.save();
+    res.status(201).json({ message: "User created!", userId: result._id });
   } catch (err) {
     if (!error.statusCode) {
       err.statusCode = 500;
@@ -36,8 +36,9 @@ exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
-  const user = await User.findOne({ email: email });
+
   try {
+    const user = await User.findOne({ email: email });
     if (!user) {
       const error = new Error("A user with this email could not be found.");
       error.statusCode = 401;
@@ -69,9 +70,9 @@ exports.login = async (req, res, next) => {
 };
 
 exports.getUserStatus = async (req, res, next) => {
-  const userId = req.userId;
-  const user = await User.findById(userId);
   try {
+    const userId = req.userId;
+    const user = await User.findById(userId);
     if (!user) {
       const error = new Error("User not found!");
       error.statusCode = 404;
@@ -88,16 +89,16 @@ exports.getUserStatus = async (req, res, next) => {
 };
 
 exports.updateUserStatus = async (req, res, next) => {
-  const newStatus = req.body.status;
-  const user = await User.findById(req.userId);
   try {
+    const newStatus = req.body.status;
+    const user = await User.findById(req.userId);
     if (!user) {
       const error = new Error("User not found!");
       error.statusCode = 404;
       throw error;
     }
     user.status = newStatus;
-    user.save();
+    await user.save();
     res.status(200).json({ message: "User status updated!" });
   } catch (err) {
     if (!err.statusCode) {
